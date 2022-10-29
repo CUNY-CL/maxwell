@@ -8,7 +8,7 @@ workflows:
       - python3.10
 
 jobs:
-  python3.7: &template
+  python3.9: &template
     docker:
       - image: python:3.9
     steps:
