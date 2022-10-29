@@ -1,18 +1,16 @@
-version: 1
+version: 2
 
 workflows:
-  version: 1
+  version: 2
   test:
     jobs:
-      - python3.7
-      - python3.8
       - python3.9
       - python3.10
 
 jobs:
   python3.7: &template
     docker:
-      - image: python:3.7
+      - image: python:3.9
     steps:
       - checkout
       - run:
@@ -21,11 +19,11 @@ jobs:
           command: pip install --progress-bar off -r requirements.txt
       - run:
           name: Run black check
-          working_directory: ~/project/
+          working_directory: ~/project/sed_align
           command: black --line-length 79 --check .
       - run:
           name: Run flake8 check
-          working_directory: ~/project/
+          working_directory: ~/project/sed_align
           command: flake8 .
       - run:
           name: Build source distribution
@@ -33,19 +31,11 @@ jobs:
           command: |
               pip install --progress-bar off --upgrade pip setuptools
               python setup.py sdist
-              pip install --progress-bar off dist/`ls dist/ | grep .tar.gz`
-      - run:
-          name: Run tests
-          working_directory: ~/project/
-          command: python hayes2009_test.py
-  python3.8:
-    <<: *template
-    docker:
-      - image: python:3.8
-  python3.9:
-    <<: *template
-    docker:
-      - image: python:3.9
+              pip install dist/`ls dist/ | grep .tar.gz`
+      # - run:
+      #     name: Run tests
+      #     working_directory: ~/project/
+      #     command: python hayes2009_test.py
   python3.10:
     <<: *template
     docker:
