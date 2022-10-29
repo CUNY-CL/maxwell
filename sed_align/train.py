@@ -52,7 +52,7 @@ def main(
     sed_aligner.params.write_params(output_path)
 
 
-def get_samples(filename: str, source_col: int, source_sep: str, target_col: int, target_sep: str): 
+def get_samples(filename: str, source_col: int, source_sep: str, target_col: int, target_sep: str):
     with open(filename, "r") as source:
         tsv_reader = csv.reader(source, delimiter="\t")
         for row in tsv_reader:

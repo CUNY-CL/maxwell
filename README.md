@@ -1,12 +1,12 @@
 # Sed-align 🪀
 
-Sed-align is a python library for learning the stochastic edit distance (SED)
-and associated parameters for string transduction. Its primary use is for 
-training the transducer model in the yoyodyne toolkit (LINK), but is viable
-for any transduction problem.
+`Sed-align` is a Python library for learning the stochastic edit distance (SED)
+between source and target alphabets for string transduction. 
 
-Models are trained using expectation-maximization over a givne dataset.
-See .....
+Given a corpus of source and target string pairs, it uses expectation-maximization 
+to learn the log-probability weights of edit actions (copy, substitution, deletion, insertion)
+that minimize the number of edits between source and target strings. These weights
+can then be used for edits over unknown strings through Viterbi decoding.
 
 ## Install
 
@@ -26,29 +26,91 @@ The latter creates a Python module in your environment that updates as you
 update the code. It can then be imported like a regular Python module:
 
 ``` python
-import yoyodyne
+import sed_align
 ```
 
 ## Usage
 
-For examples, see [`experiments`](experiments). See
-[`train.py`](yoyodyne/train.py) and [`predict.py`](yoyodyne/predict.py) for all
-model options.
+`sed-align` training can be done as either a command line tool or imported as a
+Python dependency. 
+
+For command-line use, run:
+
+	sed-align --train-data-path /path/to/train/data --output-path /path/to/output/file \
+	     --num-epoch NUM_TRAINING_EPOCHS
+
+As a library object, you can use the `StochasticEditDistance` class to pass any iterable
+of source-target pairs for training. Learned edit weights can then be saved with the
+`write_params` method.
+
+    from sed_align.sed import StochasticEditDistance
+
+	aligner = StochasticEditDistance.fit_from_data(training_samples, NUM_TRAINING_EPOCHS)
+	aligner.params.write_params(/path/to/output/file)
+
+After training, parameters can be loaded from file to calculate optimal edits between
+strings with the `action_sequence` method, which returns a tuple of the learned optimal
+sequence and the weight given to the sequence:
+
+    from sed_align.sed import StochasticEditDistance, params
+
+	sed_align_params = params.read_params(/path/to/learned/parameters/)
+	aligner = StochasticEditDistance(sed_align_params)
+	
+	optimal_sequence, optimal_cost = aligner.action_sequence(source, target)
+
+If only weight and no actions are required, `action_sequence_cost` can be called instead
+
+    optimal_cost = aligner.action_sequence_cost(source, target)
+
+Conversely, individual actions can be evaluated with the `action_cost` method:
+
+    action_cost = aligner.action_cost(action)
 
 ## Details
 
+### Data
+
 The default data format is based on the SIGMORPHON 2017 shared tasks:
 
-    source   target    feat1;feat2;...
+    source   target    ...
 
-That is, the first column is the source (a lemma), the second is the target (the
-inflection), and the third contains semi-colon delimited feature strings.
+That is, the first column is the source (a lemma) and the second is the target.
 
-For the SIGMORPHON 2016 shared task data format:
+In the case where the formatting is different, the `--source-col` and `--target-col`
+flags can be invoked. For instance, for the SIGMORPHON 2016 shared task data format:
 
-    source   feat1,feat2,...    target
+    source   ...    target
 
-one would instead specify `--target-col 3 --features-col 2 --features-sep ,`
+### Edit-actions
 
-Finally, to perform transductions without features (whether or not a feature
-column exists in the data), one would simply specify `--features-col 0`.
+Edit weights are maintained as a `ParamsDict` object, a dataclass comprising three dictionaries
+and one floats. The dictionaries, and their indexing, are as follows:
+
+1. `delta_sub`
+        Keys: Tuple of source alphabet X target alphabet. 
+		Values: Substitution weight for all non-equivalent source-target pairs.
+		        If source symbol == target symbol, a seperate copy probability is used.
+2. `delta_del`
+        Keys: All symbols in source string alphabet. Represents deletion from string.
+		Values: Deletion weight for removal of source symbol from string.
+2. `delta_ins`
+        Keys: All symbols in target string alphabet. Represents insertion into string.
+		Values: Insertion weight for introduction of target symbol into string.
+2. `delta_eos`
+        Special float value representing probability of terminating the string.
+
+In Python, these values may be accessed through a `StochasticEditDistance` object through the params attribute:
+
+    aligner.params.delta_XYZ
+
+## Further Reading
+
+For further reading, please see:
+
+	Dempster, A., Laird N., and D. Rubin, “Maximum Likelihood
+	From Incomplete Data via the EM Algorithm,” J. Royal Statistical
+	Soc. Series B (methodological), vol. 39, pp. 1-38, 1977
+
+    Ristad, E. S. and Yianilos, P. N. 1998. Learning string-edit distance. IEEE
+    transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.

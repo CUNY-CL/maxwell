@@ -89,6 +89,10 @@ class ParamDict:
         with open(filepath, "wb") as file:
             pickle.dump(self, file)
 
+    @classmethod
+    def read_params(cls, filepath: str) -> ParamDict:
+        with open(filepath, "wb") as file:
+            return pickle.load(file)
 
 class StochasticEditDistance(abc.ABC):
     params: ParamDict
@@ -384,7 +388,7 @@ class StochasticEditDistance(abc.ABC):
         gammas.delta_eos -= denom
         assert numpy.isclose(0.0, gammas.sum()), gammas.sum()
 
-    def viterbi_alignment(
+    def action_sequence(
         self, source: Sequence, target: Sequence,
     ) -> Tuple[float, List]:
         """Computes optimal edit sequences using Viterbi edit distance.
