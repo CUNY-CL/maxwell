@@ -175,8 +175,8 @@
 
    END OF TERMS AND CONDITIONS
 
-   Copyright 2022 Adam Wiemerslage, Kyle Gorman, Travis M. Bartley, and
-   contributors
+   Copyright 2022 Simon Clematide, Peter Makarov, and
+   Travis M. Bartley.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
