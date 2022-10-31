@@ -6,6 +6,7 @@ After:
     transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
 """
 
+
 from __future__ import annotations
 
 import abc
@@ -93,6 +94,7 @@ class ParamDict:
     def read_params(cls, filepath: str) -> ParamDict:
         with open(filepath, "wb") as file:
             return pickle.load(file)
+
 
 class StochasticEditDistance(abc.ABC):
     params: ParamDict
@@ -191,7 +193,10 @@ class StochasticEditDistance(abc.ABC):
         target_alphabet = set()
         sources = []
         targets = []
-        for s, t, _ in lines:
+        for line in lines:
+            # Split lines manually to ignore features from yoyodyne.
+            s = line[0]
+            t = line[1]
             source_alphabet.update(s)
             target_alphabet.update(t)
             sources.append(s)
@@ -302,7 +307,10 @@ class StochasticEditDistance(abc.ABC):
         return float(ll)
 
     def em(
-        self, sources: Sequence[Any], targets: Sequence[Any], epochs: int = 10,
+        self,
+        sources: Sequence[Any],
+        targets: Sequence[Any],
+        epochs: int = 10,
     ) -> None:
         """Update parameters using expectation-maximization.
 
@@ -389,7 +397,9 @@ class StochasticEditDistance(abc.ABC):
         assert numpy.isclose(0.0, gammas.sum()), gammas.sum()
 
     def action_sequence(
-        self, source: Sequence, target: Sequence,
+        self,
+        source: Sequence,
+        target: Sequence,
     ) -> Tuple[float, List]:
         """Computes optimal edit sequences using Viterbi edit distance.
 

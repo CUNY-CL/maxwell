@@ -23,12 +23,14 @@ __version__ = "0.1.0"
 
 def main() -> None:
     setuptools.setup(
-        name="sed-align",
+        name="maxwell",
         version=__version__,
         description="Stochastic Edit Distance aligner for string transduction",
         long_description=_LONG_DESCRIPTION,
         long_description_content_type="text/markdown",
-        author="???",
+        # TODO: Check if proper authorship.
+        author="""Simon Clematide, Simon Makarov,
+                    Travis M. Bartley, Kyle Gorman""",
         keywords=[
             "computational linguistics",
             "morphology",
@@ -55,7 +57,7 @@ def main() -> None:
         packages=setuptools.find_packages(),
         entry_points={
             "console_scripts": [
-                "sed-align = sed_align.train:main",
+                "maxwell-align = maxwell_align.train:main",
             ]
         },
         data_files=[(".", ["LICENSE.txt"])],

@@ -1,6 +1,6 @@
-# Sed-align 🪀
+# Maxwell's Alignment 👹
 
-`Sed-align` is a Python library for learning the stochastic edit distance (SED)
+Maxwell's Alignment is a Python library for learning the stochastic edit distance (SED)
 between source and target alphabets for string transduction. 
 
 Given a corpus of source and target string pairs, it uses expectation-maximization 
@@ -26,24 +26,24 @@ The latter creates a Python module in your environment that updates as you
 update the code. It can then be imported like a regular Python module:
 
 ``` python
-import sed_align
+import maxwell_align
 ```
 
 ## Usage
 
-`sed-align` training can be done as either a command line tool or imported as a
+SED training can be done as either a command line tool or imported as a
 Python dependency. 
 
 For command-line use, run:
 
-	sed-align --train-data-path /path/to/train/data --output-path /path/to/output/file \
+	maxwell-align --train-data-path /path/to/train/data --output-path /path/to/output/file \
 	     --num-epoch NUM_TRAINING_EPOCHS
 
 As a library object, you can use the `StochasticEditDistance` class to pass any iterable
 of source-target pairs for training. Learned edit weights can then be saved with the
 `write_params` method.
 
-    from sed_align.sed import StochasticEditDistance
+    from maxwell_align.sed import StochasticEditDistance
 
 	aligner = StochasticEditDistance.fit_from_data(training_samples, NUM_TRAINING_EPOCHS)
 	aligner.params.write_params(/path/to/output/file)
@@ -52,7 +52,7 @@ After training, parameters can be loaded from file to calculate optimal edits be
 strings with the `action_sequence` method, which returns a tuple of the learned optimal
 sequence and the weight given to the sequence:
 
-    from sed_align.sed import StochasticEditDistance, params
+    from maxwell_align.sed import StochasticEditDistance, params
 
 	sed_align_params = params.read_params(/path/to/learned/parameters/)
 	aligner = StochasticEditDistance(sed_align_params)
@@ -71,7 +71,7 @@ Conversely, individual actions can be evaluated with the `action_cost` method:
 
 ### Data
 
-The default data format is based on the SIGMORPHON 2017 shared tasks:
+The default data format is based on the SIGMORPHON 2017[LINK] shared tasks:
 
     source   target    ...
 
