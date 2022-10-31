@@ -29,7 +29,7 @@ def main() -> None:
         long_description=_LONG_DESCRIPTION,
         long_description_content_type="text/markdown",
         author="""Simon Clematide, Peter Makarov,
-                    Travis M. Bartley, Kyle Gorman""",
+                    Travis M. Bartley""",
         keywords=[
             "computational linguistics",
             "morphology",
