@@ -19,11 +19,11 @@ jobs:
           command: pip install --progress-bar off -r requirements.txt
       - run:
           name: Run black check
-          working_directory: ~/project/sed_align
+          working_directory: ~/project/maxwell
           command: black --line-length 79 --check .
       - run:
           name: Run flake8 check
-          working_directory: ~/project/sed_align
+          working_directory: ~/project/maxwell
           command: flake8 .
       - run:
           name: Build source distribution
@@ -32,10 +32,10 @@ jobs:
               pip install --progress-bar off --upgrade pip setuptools
               python setup.py sdist
               pip install dist/`ls dist/ | grep .tar.gz`
-      # - run:
-      #     name: Run tests
-      #     working_directory: ~/project/
-      #     command: python hayes2009_test.py
+      - run:
+          name: Run tests
+          working_directory: ~/project/
+          command: python -m maxwell.tests.test_sed
   python3.10:
     <<: *template
     docker:

@@ -1,11 +1,11 @@
 """Training."""
 
 import csv
-import click
-
 from typing import List
 
-from . import util, sed
+import click
+
+from . import sed, util
 
 
 @click.command()
@@ -52,18 +52,24 @@ def main(
     sed_aligner.params.write_params(output_path)
 
 
-def get_samples(filename: str, source_col: int, source_sep: str, target_col: int, target_sep: str):
+def get_samples(
+    filename: str,
+    source_col: int,
+    source_sep: str,
+    target_col: int,
+    target_sep: str,
+):
     with open(filename, "r") as source:
         tsv_reader = csv.reader(source, delimiter="\t")
         for row in tsv_reader:
             source = _get_cell(row, source_col, source_sep)
             target = _get_cell(row, target_col, target_sep)
             # Adds third item for compatibility with yoyodyne dataloader.
-            yield source, target, None
+            yield source, target
 
 
 def _get_cell(row: List[str], col: int, sep: str) -> List[str]:
-    """Returns the split cell of a row.  
+    """Returns the split cell of a row.
     Args:
         row (List[str]): the split row.
         col (int): the column index

@@ -3,8 +3,9 @@
 After:
 
     Ristad, E. S.and Yianilos, P. N. 1998. Learning string-edit distance. IEEE
-    transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
+    Transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
 """
+
 
 from __future__ import annotations
 
@@ -14,10 +15,11 @@ import pickle
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
+
 import tqdm
 from scipy import special
 
-from . import util, actions
+from . import actions, util
 
 LARGE_NEG_CONST = -1e6
 
@@ -93,6 +95,7 @@ class ParamDict:
     def read_params(cls, filepath: str) -> ParamDict:
         with open(filepath, "wb") as file:
             return pickle.load(file)
+
 
 class StochasticEditDistance(abc.ABC):
     params: ParamDict
@@ -191,7 +194,10 @@ class StochasticEditDistance(abc.ABC):
         target_alphabet = set()
         sources = []
         targets = []
-        for s, t, _ in lines:
+        for line in lines:
+            # Split lines manually to ignore features from yoyodyne.
+            s = line[0]
+            t = line[1]
             source_alphabet.update(s)
             target_alphabet.update(t)
             sources.append(s)
@@ -302,7 +308,10 @@ class StochasticEditDistance(abc.ABC):
         return float(ll)
 
     def em(
-        self, sources: Sequence[Any], targets: Sequence[Any], epochs: int = 10,
+        self,
+        sources: Sequence[Any],
+        targets: Sequence[Any],
+        epochs: int = 10,
     ) -> None:
         """Update parameters using expectation-maximization.
 
@@ -389,7 +398,9 @@ class StochasticEditDistance(abc.ABC):
         assert numpy.isclose(0.0, gammas.sum()), gammas.sum()
 
     def action_sequence(
-        self, source: Sequence, target: Sequence,
+        self,
+        source: Sequence,
+        target: Sequence,
     ) -> Tuple[float, List]:
         """Computes optimal edit sequences using Viterbi edit distance.
 
