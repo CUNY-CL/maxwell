@@ -19,11 +19,11 @@ jobs:
           command: pip install --progress-bar off -r requirements.txt
       - run:
           name: Run black check
-          working_directory: ~/project/maxwell_align
+          working_directory: ~/project/maxwell
           command: black --line-length 79 --check .
       - run:
           name: Run flake8 check
-          working_directory: ~/project/maxwell_align
+          working_directory: ~/project/maxwell
           command: flake8 .
       - run:
           name: Build source distribution
@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Run tests
           working_directory: ~/project/
-          command: python -m maxwell_align.tests.test_sed
+          command: python -m maxwell.tests.test_sed
   python3.10:
     <<: *template
     docker:

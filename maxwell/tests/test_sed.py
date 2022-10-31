@@ -15,7 +15,6 @@ class TestSed(unittest.TestCase):
             SOURCE_ALPHA, TARGET_ALPHA, copy_probability=None
         )
         eos_weight = sed_.params.delta_eos
-
         for weight_dict in ("delta_del", "delta_ins", "delta_sub"):
             for weight in getattr(sed_.params, weight_dict).values():
                 self.assertTrue(numpy.isclose(eos_weight, weight))
@@ -23,7 +22,6 @@ class TestSed(unittest.TestCase):
     def test_sed_copy_biased_initialization(self):
         sed_ = sed.StochasticEditDistance.build_sed(SOURCE_ALPHA, TARGET_ALPHA)
         eos_weight = sed_.params.delta_eos
-
         for weight_dict in ("delta_del", "delta_ins"):
             for weight in getattr(sed_.params, weight_dict).values():
                 self.assertTrue(numpy.isclose(eos_weight, weight))

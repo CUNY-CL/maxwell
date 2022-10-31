@@ -28,7 +28,7 @@ def main() -> None:
         description="Stochastic Edit Distance aligner for string transduction",
         long_description=_LONG_DESCRIPTION,
         long_description_content_type="text/markdown",
-        author="""Simon Clematide, Simon Makarov,
+        author="""Simon Clematide, Peter Makarov,
                     Travis M. Bartley, Kyle Gorman""",
         keywords=[
             "computational linguistics",
@@ -56,7 +56,7 @@ def main() -> None:
         packages=setuptools.find_packages(),
         entry_points={
             "console_scripts": [
-                "maxwell-align = maxwell_align.train:main",
+                "maxwell-train = maxwell.train:main",
             ]
         },
         data_files=[(".", ["LICENSE.txt"])],
