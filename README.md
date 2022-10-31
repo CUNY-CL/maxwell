@@ -109,17 +109,15 @@ and one floats. The dictionaries, and their indexing, are as follows:
 2. `delta_eos`
         Special float value representing probability of terminating the string.
 
-In Python, these values may be accessed through a `StochasticEditDistance` object through the params attribute:
-
-    aligner.params.delta_XYZ
+In Python, these values may be accessed through a `StochasticEditDistance` object through the `params` attribute.
 
 ## Further Reading
 
 For further reading, please see:
 
-	Dempster, A., Laird N., and D. Rubin, “Maximum Likelihood
-	From Incomplete Data via the EM Algorithm,” J. Royal Statistical
-	Soc. Series B (methodological), vol. 39, pp. 1-38, 1977
+- Dempster, A., Laird N., and D. Rubin, “Maximum Likelihood
+From Incomplete Data via the EM Algorithm,” J. Royal Statistical
+Soc. Series B (methodological), vol. 39, pp. 1-38, 1977
 
-    Ristad, E. S. and Yianilos, P. N. 1998. Learning string-edit distance. IEEE
-    transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
+- Ristad, E. S. and Yianilos, P. N. 1998. Learning string-edit distance. IEEE
+transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
