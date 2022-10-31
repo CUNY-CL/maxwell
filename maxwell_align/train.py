@@ -1,11 +1,11 @@
 """Training."""
 
 import csv
-import click
-
 from typing import List
 
-from . import util, sed
+import click
+
+from . import sed, util
 
 
 @click.command()

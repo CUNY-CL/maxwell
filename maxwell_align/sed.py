@@ -3,7 +3,7 @@
 After:
 
     Ristad, E. S.and Yianilos, P. N. 1998. Learning string-edit distance. IEEE
-    transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
+    Transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
 """
 
 
@@ -15,10 +15,11 @@ import pickle
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
+
 import tqdm
 from scipy import special
 
-from . import util, actions
+from . import actions, util
 
 LARGE_NEG_CONST = -1e6
 
