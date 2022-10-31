@@ -37,8 +37,7 @@ Python dependency.
 For command-line use, run:
 
 ```bash
-	maxwell-align --train-data-path /path/to/train/data --output-path /path/to/output/file \
-	     --num-epoch NUM_TRAINING_EPOCHS
+maxwell-align --train-data-path /path/to/train/data --output-path /path/to/output/file --num-epoch NUM_TRAINING_EPOCHS
 ```
 
 As a library object, you can use the `StochasticEditDistance` class to pass any iterable
@@ -46,10 +45,10 @@ of source-target pairs for training. Learned edit weights can then be saved with
 `write_params` method.
 
 ```python
-    from maxwell_align.sed import StochasticEditDistance
+from maxwell_align.sed import StochasticEditDistance
 
-	aligner = StochasticEditDistance.fit_from_data(training_samples, NUM_TRAINING_EPOCHS)
-	aligner.params.write_params(/path/to/output/file)
+aligner = StochasticEditDistance.fit_from_data(training_samples, NUM_TRAINING_EPOCHS)
+aligner.params.write_params(/path/to/output/file)
 ```
 
 After training, parameters can be loaded from file to calculate optimal edits between
@@ -57,24 +56,24 @@ strings with the `action_sequence` method, which returns a tuple of the learned 
 sequence and the weight given to the sequence:
 
 ```python
-    from maxwell_align.sed import StochasticEditDistance, params
+from maxwell_align.sed import StochasticEditDistance, params
 
-	sed_align_params = params.read_params(/path/to/learned/parameters/)
-	aligner = StochasticEditDistance(sed_align_params)
+sed_align_params = params.read_params(/path/to/learned/parameters/)
+aligner = StochasticEditDistance(sed_align_params)
 	
-	optimal_sequence, optimal_cost = aligner.action_sequence(source, target)
+optimal_sequence, optimal_cost = aligner.action_sequence(source, target)
 ```
 
 If only weight and no actions are required, `action_sequence_cost` can be called instead
 
 ```python
-    optimal_cost = aligner.action_sequence_cost(source, target)
+optimal_cost = aligner.action_sequence_cost(source, target)
 ```
 
 Conversely, individual actions can be evaluated with the `action_cost` method:
 
 ```python
-    action_cost = aligner.action_cost(action)
+action_cost = aligner.action_cost(action)
 ```
 
 ## Details
@@ -92,7 +91,7 @@ flags can be invoked. For instance, for the SIGMORPHON 2016 shared task data for
 
     source   ...    target
 
-### Edit-actions
+### Edit Actions
 
 Edit weights are maintained as a `ParamsDict` object, a dataclass comprising three dictionaries
 and one floats. The dictionaries, and their indexing, are as follows:

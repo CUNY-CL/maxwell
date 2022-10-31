@@ -28,7 +28,6 @@ def main() -> None:
         description="Stochastic Edit Distance aligner for string transduction",
         long_description=_LONG_DESCRIPTION,
         long_description_content_type="text/markdown",
-        # TODO: Check if proper authorship.
         author="""Simon Clematide, Simon Makarov,
                     Travis M. Bartley, Kyle Gorman""",
         keywords=[
