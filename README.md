@@ -95,6 +95,9 @@ In the case where the formatting is different, the `--source-col` and `--target-
 flags can be invoked. For instance, for the SIGMORPHON 2016 shared task data format:
 
     source   ...    target
+    
+one would instead use the flag `--target-col 3` to use the third column as target
+strings (note the use of 1-based indexing).
 
 ### Edit Actions
 
