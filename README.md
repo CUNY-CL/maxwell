@@ -57,7 +57,7 @@ from maxwell import sed
 
 
 aligner = sed.StochasticEditDistance.fit_from_data(
-    training_samples, NUM_TRAINING_EPOCHS
+    training_samples, NUM_EPOCHS
 )
 aligner.params.write_params("/path/to/output/file")
 ```
