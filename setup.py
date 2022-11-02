@@ -53,7 +53,7 @@ def main() -> None:
             "scipy>=1.6",
             "tqdm>=4.64.1",
         ],
-        packages=setuptools.find_packages(),
+        packages=setuptools.find_packages(exclude=["maxwell.tests"]),
         entry_points={
             "console_scripts": [
                 "maxwell-train = maxwell.train:main",
