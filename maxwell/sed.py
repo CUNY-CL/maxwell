@@ -15,7 +15,6 @@ import pickle
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
-
 import tqdm
 from scipy import special
 
@@ -88,12 +87,14 @@ class ParamDict:
         self.delta_eos = other.delta_eos
 
     def write_params(self, filepath: str) -> None:
+        util.log_info(f"Writing parameters to {filepath}")
         with open(filepath, "wb") as file:
             pickle.dump(self, file)
 
     @classmethod
     def read_params(cls, filepath: str) -> ParamDict:
-        with open(filepath, "wb") as file:
+        util.log_info(f"Restoring parameters from {filepath}")
+        with open(filepath, "rb") as file:
             return pickle.load(file)
 
 
