@@ -16,6 +16,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
 import tqdm
+
 from scipy import special
 
 from . import actions, util
@@ -321,7 +322,7 @@ class StochasticEditDistance(abc.ABC):
             targets (Sequence[Any]): target strings.
             epochs (int): number of EM epochs.
         """
-        loglike = self.log_likelihood(sources, targets)
+        loglike = numpy.NINF
         gammas = ParamDict.from_params(self.params)
         for epoch in range(epochs):
             with tqdm.tqdm(zip(sources, targets), total=len(sources)) as pbar:
