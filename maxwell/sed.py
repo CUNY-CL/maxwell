@@ -16,6 +16,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
 import tqdm
+
 from scipy import special
 
 from . import actions, util
@@ -300,13 +301,14 @@ class StochasticEditDistance(abc.ABC):
         targets: Iterable[Sequence[Any]],
     ) -> float:
         """Computes log likelihood."""
-        ll = numpy.mean(
-            [
-                self.forward_evaluate(source, target)[-1, -1]
-                for source, target in zip(sources, targets)
-            ]
-        )
-        return float(ll)
+        with tqdm.tqdm(
+            zip(sources, targets), total=len(sources), leave=False
+        ) as pbar:
+            ll = []
+            pbar.set_description("Calculating log-likelihood")
+            for source, target in pbar:
+                ll.append(self.forward_evaluate(source, target)[-1, -1])
+        return float(numpy.mean(ll))
 
     def em(
         self,
@@ -321,7 +323,7 @@ class StochasticEditDistance(abc.ABC):
             targets (Sequence[Any]): target strings.
             epochs (int): number of EM epochs.
         """
-        loglike = self.log_likelihood(sources, targets)
+        loglike = numpy.NINF
         gammas = ParamDict.from_params(self.params)
         for epoch in range(epochs):
             with tqdm.tqdm(zip(sources, targets), total=len(sources)) as pbar:
