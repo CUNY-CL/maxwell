@@ -301,13 +301,14 @@ class StochasticEditDistance(abc.ABC):
         targets: Iterable[Sequence[Any]],
     ) -> float:
         """Computes log likelihood."""
-        ll = numpy.mean(
-            [
-                self.forward_evaluate(source, target)[-1, -1]
-                for source, target in zip(sources, targets)
-            ]
-        )
-        return float(ll)
+        with tqdm.tqdm(
+            zip(sources, targets), total=len(sources), leave=False
+        ) as pbar:
+            ll = []
+            pbar.set_description("Calculating log-likelihood")
+            for source, target in pbar:
+                ll.append(self.forward_evaluate(source, target)[-1, -1])
+        return float(numpy.mean(ll))
 
     def em(
         self,
