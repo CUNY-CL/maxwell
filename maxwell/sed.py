@@ -325,8 +325,8 @@ class StochasticEditDistance(abc.ABC):
         """
         loglike = numpy.NINF
         gammas = ParamDict.from_params(self.params)
-        for epoch in range(epochs):
-            with tqdm.tqdm(zip(sources, targets), total=len(sources)) as pbar:
+        with tqdm.tqdm(zip(sources, targets), total=len(sources)) as pbar:
+            for epoch in range(epochs):
                 pbar.set_description(f"Epoch {epoch}")
                 pbar.set_postfix(loglike=loglike)
                 for source, target in pbar:
