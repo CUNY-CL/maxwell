@@ -18,7 +18,7 @@ with open(os.path.join(_THIS_DIR, "README.md")) as f:
     _LONG_DESCRIPTION = f.read().strip()
 
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 
 def main() -> None:
@@ -47,7 +47,6 @@ def main() -> None:
         license="Apache 2.0",
         python_requires=">=3.9",
         install_requires=[
-            "click>=8.1.3",
             "numpy>=1.20.1",
             "scipy>=1.6",
             "tqdm>=4.64.1",

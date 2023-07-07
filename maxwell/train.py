@@ -36,15 +36,7 @@ def _get_samples(
             yield source, target
 
 
-def main(
-    train_data_path,
-    source_col,
-    target_col,
-    source_sep,
-    target_sep,
-    output_path,
-    num_epochs,
-):
+def main() -> None:
     """Training."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--train", required=True)
@@ -59,16 +51,16 @@ def main(
     for arg, val in vars(args).items():
         util.log_info(f"\t{arg}: {val!r}")
     train_samples = _get_samples(
-        train_data_path,
-        source_col,
-        source_sep,
-        target_col,
-        target_sep,
+        args.train,
+        args.source_col,
+        args.source_sep,
+        args.target_col,
+        args.target_sep,
     )
     sed_aligner = sed.StochasticEditDistance.fit_from_data(
-        train_samples, epochs=num_epochs
+        train_samples, epochs=args.epochs
     )
-    sed_aligner.params.write_params(output_path)
+    sed_aligner.params.write_params(args.output)
 
 
 if __name__ == "__main__":
