@@ -18,7 +18,7 @@ with open(os.path.join(_THIS_DIR, "README.md")) as f:
     _LONG_DESCRIPTION = f.read().strip()
 
 
-__version__ = "0.2.0.post2"
+__version__ = "0.2.1"
 
 
 def main() -> None:
@@ -28,8 +28,7 @@ def main() -> None:
         description="Stochastic Edit Distance aligner for string transduction",
         long_description=_LONG_DESCRIPTION,
         long_description_content_type="text/markdown",
-        author="""Simon Clematide, Peter Makarov,
-                    Travis M. Bartley""",
+        author="Simon Clematide, Peter Makarov, Travis M. Bartley",
         keywords=[
             "computational linguistics",
             "morphology",
