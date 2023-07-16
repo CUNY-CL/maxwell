@@ -44,9 +44,9 @@ dependency.
 For command-line use, run:
 
     maxwell-train \
-        --train-data-path /path/to/train/data \
-        --output-path /path/to/output/file \
-        --num-epoch "${NUM_EPOCHS}"
+        --train /path/to/train/data \
+        --output /path/to/output/file \
+        --epochs "${NUM_EPOCHS}"
 
 As a library object, you can use the `StochasticEditDistance` class to pass any
 iterable of source-target pairs for training. Learned edit weights can then be
@@ -70,7 +70,7 @@ learned optimal sequence and the weight given to the sequence:
 from maxwell import sed
 
 
-params = sed.ParamsDict.read_params("/path/to/learned/parameters/")
+params = sed.ParamsDict.read_params("/path/to/learned/parameters")
 aligner = sed.StochasticEditDistance(params)
 optimal_sequence, optimal_cost = aligner.action_sequence(source, target)
 ```

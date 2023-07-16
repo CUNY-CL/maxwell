@@ -1,9 +1,8 @@
-"""Training."""
+"""Stochastic edit distance training."""
 
+import argparse
 import csv
-from typing import List
-
-import click
+from typing import Iterator, List, Tuple
 
 from . import sed, util
 
@@ -28,58 +27,40 @@ def _get_samples(
     source_sep: str,
     target_col: int,
     target_sep: str,
-):
+) -> Iterator[Tuple[str, str]]:
     with open(filename, "r") as source:
         tsv_reader = csv.reader(source, delimiter="\t")
         for row in tsv_reader:
             source = _get_cell(row, source_col, source_sep)
             target = _get_cell(row, target_col, target_sep)
-            # Adds third item for compatibility with yoyodyne dataloader.
             yield source, target
 
 
-@click.command()
-@click.option("--train-data-path", required=True)
-@click.option("--source-col", type=int, default=1)
-@click.option("--target-col", type=int, default=2)
-@click.option("--source-sep", type=str, default="")
-@click.option("--target-sep", type=str, default="")
-@click.option("--output-path", required=True)
-@click.option("--num-epochs", type=int, default=10)
-def main(
-    train_data_path,
-    source_col,
-    target_col,
-    source_sep,
-    target_sep,
-    output_path,
-    num_epochs,
-):
-    """Training.
-
-    Args:
-        train_data_path (_type_): _description_
-        source_col (_type_): _description_
-        target_col (_type_): _description_
-        source_sep (_type_): _description_
-        target_sep (_type_): _description_
-        output_path (_type_): _description_
-        num_epochs (_type_): _description_
-    """
+def main() -> None:
+    """Training."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--train", required=True)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--source_col", type=int, default=1)
+    parser.add_argument("--target_col", type=int, default=2)
+    parser.add_argument("--source_sep", type=str, default="")
+    parser.add_argument("--target_sep", type=str, default="")
+    parser.add_argument("--epochs", type=int, default=10)
+    args = parser.parser_args()
     util.log_info("Arguments:")
-    for arg, val in click.get_current_context().params.items():
+    for arg, val in vars(args).items():
         util.log_info(f"\t{arg}: {val!r}")
     train_samples = _get_samples(
-        train_data_path,
-        source_col,
-        source_sep,
-        target_col,
-        target_sep,
+        args.train,
+        args.source_col,
+        args.source_sep,
+        args.target_col,
+        args.target_sep,
     )
     sed_aligner = sed.StochasticEditDistance.fit_from_data(
-        train_samples, epochs=num_epochs
+        train_samples, epochs=args.epochs
     )
-    sed_aligner.params.write_params(output_path)
+    sed_aligner.params.write_params(args.output)
 
 
 if __name__ == "__main__":
