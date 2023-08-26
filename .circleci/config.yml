@@ -53,10 +53,10 @@ workflows:
     jobs:
       - pre-build:
           name: flake8
-          command-run: flake8 wikipron tests
+          command-run: flake8 .
       - pre-build:
           name: black
-          command-run: black --line-length=79 --check wikipron tests data
+          command-run: black --line-length=79 --check .
       - pre-build:
           name: twine
           command-run: |
