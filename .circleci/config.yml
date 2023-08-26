@@ -7,7 +7,7 @@ jobs:
       command-run:
         type: string
     docker:
-      # Use the latest Python 3.x image from CircleCI that WikiPron supports.
+      # Use the latest Python 3.x image from CircleCI that Maxwell supports.
       # See: https://circleci.com/developer/images/image/cimg/python
       - image: cimg/python:3.10
         #auth9
