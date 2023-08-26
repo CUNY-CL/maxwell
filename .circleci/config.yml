@@ -52,11 +52,11 @@ workflows:
   build-and-test:
     jobs:
       - pre-build:
-          name: flake8
-          command-run: flake8 .
-      - pre-build:
           name: black
           command-run: black --line-length=79 --check .
+      - pre-build:
+          name: flake8
+          command-run: flake8 .
       - pre-build:
           name: twine
           command-run: |
@@ -66,7 +66,6 @@ workflows:
       - build-python:
           requires:
             - black
-            - build
             - flake8
             - twine
           matrix:
