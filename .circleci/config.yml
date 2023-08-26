@@ -65,8 +65,9 @@ workflows:
             twine check dist/`ls dist/ | grep .whl`
       - build-python:
           requires:
-            - flake8
             - black
+            - build
+            - flake8
             - twine
           matrix:
             parameters:
