@@ -46,7 +46,7 @@ def main() -> None:
     parser.add_argument("--source_sep", type=str, default="")
     parser.add_argument("--target_sep", type=str, default="")
     parser.add_argument("--epochs", type=int, default=10)
-    args = parser.parser_args()
+    args = parser.parse_args()
     util.log_info("Arguments:")
     for arg, val in vars(args).items():
         util.log_info(f"\t{arg}: {val!r}")
