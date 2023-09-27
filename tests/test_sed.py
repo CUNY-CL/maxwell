@@ -3,7 +3,7 @@ import unittest
 
 import numpy
 
-from . import actions, sed, util
+from maxwell import actions, sed, util
 
 SOURCE_ALPHA = list("abcdefg")
 TARGET_ALPHA = list("fghijk")
