@@ -17,8 +17,6 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 import numpy
 import tqdm
 
-from scipy import special
-
 from . import actions, util
 
 LARGE_NEG_CONST = -1e6
@@ -70,7 +68,7 @@ class ParamDict:
         for vs in (self.delta_sub, self.delta_ins, self.delta_del):
             values.extend(vs.values())
         # Uses sum of exponentiation to maintain logarithmic values.
-        return special.logsumexp(values)
+        return numpy.logaddexp.reduce(values)
 
     @classmethod
     def from_params(cls, other: ParamDict) -> ParamDict:
@@ -248,7 +246,7 @@ class StochasticEditDistance(abc.ABC):
                         )
                         + alpha[t - 1, v - 1]
                     )
-                alpha[t, v] = special.logsumexp(summands)
+                alpha[t, v] = numpy.logaddexp.reduce(summands)
         alpha[T, V] += self.params.delta_eos
         return alpha
 
@@ -292,7 +290,7 @@ class StochasticEditDistance(abc.ABC):
                         )
                         + beta[t + 1, v + 1]
                     )
-                beta[t, v] = special.logsumexp(summands)
+                beta[t, v] = numpy.logaddexp.reduce(summands)
         return beta
 
     def log_likelihood(
@@ -348,7 +346,7 @@ class StochasticEditDistance(abc.ABC):
         """
         alpha = self.forward_evaluate(source, target)
         beta = self.backward_evaluate(source, target)
-        gammas.delta_eos = special.logsumexp([gammas.delta_eos, 0.0])
+        gammas.delta_eos = numpy.logaddexp(gammas.delta_eos, 0.0)
         T = len(source)
         V = len(target)
         for t in range(T + 1):
@@ -358,7 +356,7 @@ class StochasticEditDistance(abc.ABC):
                 tchar = target[v - 1]
                 stpair = schar, tchar
                 if t > 0 and schar in gammas.delta_del:
-                    gammas.delta_del[schar] = special.logsumexp(
+                    gammas.delta_del[schar] = numpy.logaddexp.reduce(
                         [
                             gammas.delta_del[schar],
                             alpha[t - 1, v]
@@ -367,7 +365,7 @@ class StochasticEditDistance(abc.ABC):
                         ]
                     )
                 if v > 0 and tchar in gammas.delta_ins:
-                    gammas.delta_ins[tchar] = special.logsumexp(
+                    gammas.delta_ins[tchar] = numpy.logaddexp.reduce(
                         [
                             gammas.delta_ins[tchar],
                             alpha[t, v - 1]
@@ -376,7 +374,7 @@ class StochasticEditDistance(abc.ABC):
                         ]
                     )
                 if t > 0 and v > 0 and stpair in gammas.delta_sub:
-                    gammas.delta_sub[stpair] = special.logsumexp(
+                    gammas.delta_sub[stpair] = numpy.logaddexp.reduce(
                         [
                             gammas.delta_sub[stpair],
                             alpha[t - 1, v - 1]
