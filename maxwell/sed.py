@@ -6,7 +6,6 @@ After:
     Transactions on Pattern Analysis and Machine Intelligence 20(5): 522-532.
 """
 
-
 from __future__ import annotations
 
 import abc
