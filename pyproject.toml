@@ -10,7 +10,7 @@ include = ["maxwell*"]
 
 [project]
 name = "maxwell"
-version = "0.2.2.post2"
+version = "0.2.3"
 description = "Stochastic Edit Distance aligenr for string transduction"
 readme = "README.md"
 requires-python = "> 3.9"
@@ -28,7 +28,6 @@ keywords = [
 ]
 dependencies = [
     "numpy >= 1.20.1",
-    "scipy >= 1.6",
     "tqdm >= 4.64.1",
 ]
 classifiers = [
