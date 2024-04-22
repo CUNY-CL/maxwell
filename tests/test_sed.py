@@ -1,4 +1,5 @@
 """Unit tests for sed.py."""
+
 import unittest
 
 import numpy
