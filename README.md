@@ -123,9 +123,7 @@ follows:
 In Python, these values may be accessed through a `StochasticEditDistance`
 object's `params` attribute.
 
-## Further reading
-
-For further reading, please see:
+## References
 
 Dempster, A., Laird, N., and Rubin, D. 1977. Maximum likelihood from incomplete
 data via the EM algorithm. *Journal of the Royal Statistical Society, Series B*
