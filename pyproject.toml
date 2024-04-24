@@ -10,7 +10,7 @@ include = ["maxwell*"]
 
 [project]
 name = "maxwell"
-version = "0.2.3.post1"
+version = "0.2.4"
 description = "Stochastic Edit Distance aligenr for string transduction"
 readme = "README.md"
 requires-python = "> 3.9"
