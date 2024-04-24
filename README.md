@@ -23,14 +23,9 @@ First install dependencies:
 
 Then install:
 
-    python setup.py install
+    pip install .
 
-Or:
-
-    python setup.py develop
-
-The latter creates a Python module in your environment that updates as you
-update the code. It can then be imported like a regular Python module:
+It can then be imported like a regular Python module:
 
 ```python
 import maxwell
