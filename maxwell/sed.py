@@ -98,8 +98,6 @@ class ParamDict:
 
 class StochasticEditDistance(abc.ABC):
     params: ParamDict
-    _train_progress_bar: Optional[tqdm.tqdm]
-    _val_progress_bar: Optional[tqdm.tqdm]
 
     def __init__(self, params):
         """SED model.
@@ -112,13 +110,12 @@ class StochasticEditDistance(abc.ABC):
             params (ParamDict): SED log weights.
         """
         self.params = params
+        self.gammas = ParamDict.from_params(params)
         # Default value for 0-probability unseen pairs.
         self.default = LARGE_NEG_CONST
         psum = self.params.sum()
         if not numpy.isclose(0.0, psum):
             raise SEDParameterError(f"Parameters do not sum to 1: {psum:.4f}")
-        self._train_progress_bar = None
-        self._val_progress_bar = None
 
     @classmethod
     def build_sed(
@@ -181,6 +178,7 @@ class StochasticEditDistance(abc.ABC):
         lines: Iterable[Tuple[Any]],
         copy_probability: Optional[float] = None,
         epochs: int = 10,
+        validate: bool = True,
     ) -> StochasticEditDistance:
         """Fits StochasticEditDistance parameters from data.
 
@@ -206,8 +204,7 @@ class StochasticEditDistance(abc.ABC):
             sources.append(s)
             targets.append(t)
         sed = cls.build_sed(source_alphabet, target_alphabet, copy_probability)
-        util.log_info(f"Performing {epochs} epochs of EM")
-        sed.em(sources, targets, epochs)
+        sed.em(sources, targets, epochs, validate)
         return sed
 
     def forward_evaluate(
@@ -296,26 +293,12 @@ class StochasticEditDistance(abc.ABC):
                 beta[t, v] = numpy.logaddexp.reduce(summands)
         return beta
 
-    def log_likelihood(
-        self,
-        sources: Iterable[Sequence[Any]],
-        targets: Iterable[Sequence[Any]],
-    ) -> float:
-        """Computes log likelihood."""
-        loglikes = []
-        self.val_progress_bar.total = len(sources)
-        self.on_validation_start()
-        for source, target in zip(sources, targets):
-            loglikes.append(self.forward_evaluate(source, target)[-1, -1])
-            self.on_validation_step_end()
-        self.on_validation_epoch_end()
-        return numpy.mean(loglikes)
-
     def em(
         self,
         sources: Sequence[Any],
         targets: Sequence[Any],
-        epochs: int = 10,
+        epochs: int,
+        validate: bool = True,
     ) -> None:
         """Update parameters using expectation-maximization.
 
@@ -324,19 +307,34 @@ class StochasticEditDistance(abc.ABC):
             targets (Sequence[Any]): target strings.
             epochs (int): number of EM epochs.
         """
+        loss = numpy.inf
         gammas = ParamDict.from_params(self.params)
-        self.train_progress_bar.total = len(sources)
+        util.log_info(f"Performing {epochs} epochs of EM")
         for epoch in range(epochs):
-            self.on_train_epoch_start(epoch)
-            for source, target in zip(sources, targets):
-                self.e_step(source, target, gammas)  # Updates gammas.
-                self.on_train_step_end()
-            self.m_step(gammas)  # Updates gammas.
-            self.params.update_params(gammas)  # Updates model parameters.
-            loglike = self.log_likelihood(sources, targets)
-            self.on_train_epoch_end(loss=-loglike)
-        self.on_train_end()
-        self.on_validation_end()
+            for source, target in tqdm.tqdm(
+                zip(sources, targets),
+                desc=f"Epoch {epoch + 1}",
+                leave=False,
+                total=len(sources),
+                position=0,
+                postfix=f"Loss: {loss}" if loss is not numpy.inf else None,
+            ):
+                self.e_step(source, target, gammas)
+            self.m_step(gammas)
+            self.params.update_params(gammas)
+            if validate:
+                loglikes = []
+                for source, target in tqdm.tqdm(
+                    zip(sources, targets),
+                    desc="Validating",
+                    leave=False,
+                    total=len(sources),
+                    position=0,
+                ):
+                    loglikes.append(
+                        self.forward_evaluate(source, target)[-1, -1]
+                    )
+                loss = -numpy.mean(loglikes)
 
     def e_step(
         self, source: Sequence[Any], target: Sequence[Any], gammas: ParamDict
@@ -528,56 +526,3 @@ class StochasticEditDistance(abc.ABC):
                 (action.old, action.old), self.default
             )
         raise SEDActionError(f"Unknown action: {action}")
-
-    # The progress bar implementation is based on:
-    #
-    #     https://github.com/Lightning-AI/pytorch-lightning/
-    #     blob/master/src/lightning/pytorch/callbacks/progress/tqdm_progress.py
-
-    BAR_FORMAT = (
-        "{l_bar}{bar}| {n_fmt}/{total_fmt} "
-        "[{elapsed}<{remaining}, {rate_noinv_fmt}{postfix}]"
-    )
-
-    @property
-    def train_progress_bar(self) -> tqdm.tqdm:
-        if self._train_progress_bar is None:
-            self._train_progress_bar = tqdm.tqdm(
-                position=0, leave=True, bar_format=self.BAR_FORMAT
-            )
-        return self._train_progress_bar
-
-    def on_train_epoch_start(self, epoch: int) -> None:
-        self.train_progress_bar.initial = 0
-        self.train_progress_bar.set_description(f"Epoch {epoch}")
-
-    def on_train_step_end(self) -> None:
-        self.train_progress_bar.update()
-
-    def on_train_epoch_end(self, loss: float) -> None:
-        self.train_progress_bar.set_postfix(loss=loss)
-        self.train_progress_bar.reset()
-
-    def on_train_end(self) -> None:
-        self.train_progress_bar.close()
-
-    @property
-    def val_progress_bar(self) -> tqdm.tqdm:
-        if self._val_progress_bar is None:
-            self._val_progress_bar = tqdm.tqdm(
-                position=1, leave=False, bar_format=self.BAR_FORMAT
-            )
-        return self._val_progress_bar
-
-    def on_validation_start(self) -> None:
-        self.val_progress_bar.initial = 0
-        self.val_progress_bar.set_description("Validating")
-
-    def on_validation_step_end(self) -> None:
-        self.val_progress_bar.update()
-
-    def on_validation_epoch_end(self) -> None:
-        self.val_progress_bar.reset()
-
-    def on_validation_end(self) -> None:
-        self.val_progress_bar.close()
