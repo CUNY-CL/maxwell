@@ -14,7 +14,6 @@ import pickle
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 import numpy
-import tqdm
 
 from . import actions, util
 
@@ -178,7 +177,7 @@ class StochasticEditDistance(abc.ABC):
         lines: Iterable[Tuple[Any]],
         copy_probability: Optional[float] = None,
         epochs: int = 10,
-        validate: bool = True,
+        validate: bool = False,
     ) -> StochasticEditDistance:
         """Fits StochasticEditDistance parameters from data.
 
@@ -298,7 +297,7 @@ class StochasticEditDistance(abc.ABC):
         sources: Sequence[Any],
         targets: Sequence[Any],
         epochs: int,
-        validate: bool = True,
+        validate: bool = False,
     ) -> None:
         """Update parameters using expectation-maximization.
 
@@ -309,32 +308,35 @@ class StochasticEditDistance(abc.ABC):
         """
         loss = numpy.inf
         gammas = ParamDict.from_params(self.params)
+        train_pb = util.TrainProgressBar(len(sources))
+        val_pb = util.ValidationProgressBar(len(sources))
         util.log_info(f"Performing {epochs} epochs of EM")
         for epoch in range(epochs):
-            for source, target in tqdm.tqdm(
-                zip(sources, targets),
-                desc=f"Epoch {epoch + 1}",
-                leave=False,
-                total=len(sources),
-                position=0,
-                postfix=f"Loss: {loss}" if loss is not numpy.inf else None,
-            ):
+            train_pb.on_epoch_start(epoch=epoch)
+            for source, target in zip(sources, targets):
                 self.e_step(source, target, gammas)
+                train_pb.on_step_end()
             self.m_step(gammas)
             self.params.update_params(gammas)
             if validate:
-                loglikes = []
-                for source, target in tqdm.tqdm(
-                    zip(sources, targets),
-                    desc="Validating",
-                    leave=False,
-                    total=len(sources),
-                    position=0,
-                ):
-                    loglikes.append(
-                        self.forward_evaluate(source, target)[-1, -1]
-                    )
-                loss = -numpy.mean(loglikes)
+                loss = self.validation_pass(sources, targets, val_pb)
+            train_pb.on_epoch_end(loss=-loss)
+        train_pb.on_end(), val_pb.on_end()
+
+    def validation_pass(
+        self,
+        sources: Iterable[Sequence[Any]],
+        targets: Iterable[Sequence[Any]],
+        val_pb: util.ValidationProgressBar,
+    ) -> float:
+        """Computes log likelihood."""
+        loglikes = []
+        val_pb.on_epoch_start()
+        for source, target in zip(sources, targets):
+            loglikes.append(self.forward_evaluate(source, target)[-1, -1])
+            val_pb.on_step_end()
+        val_pb.on_epoch_end()
+        return numpy.mean(loglikes)
 
     def e_step(
         self, source: Sequence[Any], target: Sequence[Any], gammas: ParamDict
