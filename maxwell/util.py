@@ -17,7 +17,7 @@ class ProgressBar(tqdm.tqdm):
         )
 
     def on_epoch_start(self) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def on_step_end(self) -> None:
         self.update()
