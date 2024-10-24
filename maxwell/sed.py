@@ -309,7 +309,7 @@ class StochasticEditDistance(abc.ABC):
         loss = numpy.inf
         gammas = ParamDict.from_params(self.params)
         train_pb = util.TrainProgressBar(len(sources))
-        val_pb = util.ValidationProgressBar(len(sources))
+        val_pb = util.ValidationProgressBar(len(sources)) if validate else None
         util.log_info(f"Performing {epochs} epochs of EM")
         for epoch in range(epochs):
             train_pb.on_epoch_start(epoch=epoch)
@@ -321,7 +321,9 @@ class StochasticEditDistance(abc.ABC):
             if validate:
                 loss = self.validation_pass(sources, targets, val_pb)
             train_pb.on_epoch_end(loss=-loss)
-        train_pb.on_end(), val_pb.on_end()
+        train_pb.on_end()
+        if validate:
+            val_pb.on_end()
 
     def validation_pass(
         self,
