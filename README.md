@@ -4,7 +4,7 @@
 version](https://badge.fury.io/py/Maxwell.svg)](https://pypi.org/project/maxwell/)
 [![Supported Python
 versions](https://img.shields.io/pypi/pyversions/maxwell.svg)](https://pypi.org/project/maxwell/)
-[![CircleCI](https://circleci.com/gh/CUNY-CL/maxwell.svg?style=svg&circle-token=43c60045a43c2b4d4e2ad95dce2968512e7fe8d6)](https://app.circleci.com/pipelines/github/CUNY-CL/maxwell?branch=main)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/CUNY-CL/maxwell/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/CUNY-CL/maxwell/tree/main)
 
 Maxwell is a Python library for learning the stochastic edit distance (SED)
 between source and target alphabets for string transduction.
