@@ -76,9 +76,10 @@ class TestSed(unittest.TestCase):
             -1, -1
         ]  # Stochastic edit distance.
         util.log_info(o)
-        before_ll = sed_.log_likelihood(sources, targets)
+        val_pb = util.ValidationProgressBar(len(sources))
+        before_ll = sed_.validation_pass(sources, targets, val_pb=val_pb)
         sed_.em(sources, targets, epochs=1)
-        after_ll = sed_.log_likelihood(sources, targets)
+        after_ll = sed_.validation_pass(sources, targets, val_pb=val_pb)
         self.assertTrue(before_ll <= after_ll)
 
     def test_fit_from_data(self):
