@@ -85,7 +85,7 @@ class TestSed(unittest.TestCase):
     def test_fit_from_data(self):
         def _to_sample(line: str):
             input_, target = line.rstrip().split("\t", 1)
-            return input_, target, None
+            return input_, target
 
         input_lines = [
             "abby\ta b i",
