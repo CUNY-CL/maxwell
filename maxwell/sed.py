@@ -174,7 +174,7 @@ class StochasticEditDistance(abc.ABC):
     @classmethod
     def fit_from_data(
         cls,
-        lines: Iterable[Tuple[Any]],
+        lines: Iterable[Tuple[str, str]],
         copy_probability: Optional[float] = None,
         epochs: int = 10,
         validate: bool = False,
@@ -194,14 +194,11 @@ class StochasticEditDistance(abc.ABC):
         target_alphabet = set()
         sources = []
         targets = []
-        for line in lines:
-            # Split lines manually to ignore features from yoyodyne.
-            s = line[0]
-            t = line[1]
-            source_alphabet.update(s)
-            target_alphabet.update(t)
-            sources.append(s)
-            targets.append(t)
+        for source, target in lines:
+            source_alphabet.update(source)
+            target_alphabet.update(target)
+            sources.append(source)
+            targets.append(target)
         sed = cls.build_sed(source_alphabet, target_alphabet, copy_probability)
         sed.em(sources, targets, epochs, validate)
         return sed
