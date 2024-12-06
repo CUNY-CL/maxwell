@@ -174,15 +174,18 @@ class StochasticEditDistance(abc.ABC):
     @classmethod
     def fit_from_data(
         cls,
-        lines: Iterable[Tuple[str, str]],
+        data: Iterable[Tuple[Any, Any]],
         copy_probability: Optional[float] = None,
         epochs: int = 10,
         validate: bool = False,
     ) -> StochasticEditDistance:
         """Fits StochasticEditDistance parameters from data.
 
+        The elements in the data tuple are usually strings but can be any
+        hashable type.
+
         Args:
-            lines (Iterable[Tuple[Any]]): source and target strings.
+            data (Iterable[Tuple[Any, Any]]): source and target strings.
             copy_probability (Optional[float]): default probability mass for
                 copy edits.
             epochs (int): number of EM epochs.
@@ -194,7 +197,7 @@ class StochasticEditDistance(abc.ABC):
         target_alphabet = set()
         sources = []
         targets = []
-        for source, target in lines:
+        for source, target in data:
             source_alphabet.update(source)
             target_alphabet.update(target)
             sources.append(source)
