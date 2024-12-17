@@ -9,6 +9,7 @@ from . import sed, util
 
 def _get_cell(row: List[str], col: int, sep: str) -> List[str]:
     """Returns the split cell of a row.
+    
     Args:
         row (List[str]): the split row.
         col (int): the column index
@@ -37,7 +38,6 @@ def _get_samples(
 
 
 def main() -> None:
-    """Training."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--train", required=True)
     parser.add_argument("--output", required=True)
